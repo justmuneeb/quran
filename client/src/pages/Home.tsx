@@ -34,11 +34,11 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-50 to-slate-100 dark:from-slate-950 dark:to-slate-900 flex flex-col">
+    <div className="min-h-screen bg-green-50 flex flex-col">
       {/* Header */}
-      <header className="sticky top-0 z-50 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 shadow-sm">
+      <header className="sticky top-0 z-50 bg-green-600 border-b border-green-700 shadow-sm">
         <div className="max-w-4xl mx-auto px-4 py-4">
-          <h1 className="text-2xl font-bold text-center text-slate-900 dark:text-white mb-4">
+          <h1 className="text-2xl font-bold text-center text-black mb-4">
             القرآن الكريم
           </h1>
 
@@ -47,21 +47,21 @@ export default function Home() {
             <Button
               onClick={() => setActiveSurah("mulk")}
               variant={activeSurah === "mulk" ? "default" : "outline"}
-              className="rounded-full"
+              className="rounded-full bg-white text-black hover:bg-gray-100"
             >
               سورة الملك
             </Button>
             <Button
               onClick={() => setActiveSurah("manzil")}
               variant={activeSurah === "manzil" ? "default" : "outline"}
-              className="rounded-full"
+              className="rounded-full bg-white text-black hover:bg-gray-100"
             >
               المنزل
             </Button>
             <Button
               onClick={() => setActiveSurah("yaseen")}
               variant={activeSurah === "yaseen" ? "default" : "outline"}
-              className="rounded-full"
+              className="rounded-full bg-white text-black hover:bg-gray-100"
             >
               سورة يس
             </Button>
@@ -71,13 +71,13 @@ export default function Home() {
 
       {/* Main Content */}
       <main className="flex-1 max-w-4xl mx-auto w-full px-4 py-8">
-        <Card className="p-8 bg-white dark:bg-slate-900 shadow-lg">
+        <Card className="p-8 bg-green-100 shadow-lg">
           {/* Font Size Controls */}
-          <div className="flex items-center justify-between mb-8 pb-6 border-b border-slate-200 dark:border-slate-800">
-            <h2 className="text-xl font-semibold text-slate-900 dark:text-white">
+          <div className="flex items-center justify-between mb-8 pb-6 border-b border-green-300">
+            <h2 className="text-xl font-semibold text-black">
               {currentSurah.name}
             </h2>
-            <div className="flex items-center gap-3 bg-slate-100 dark:bg-slate-800 rounded-lg p-2">
+            <div className="flex items-center gap-3 bg-green-200 rounded-lg p-2">
               <Button
                 onClick={decreaseFontSize}
                 variant="ghost"
@@ -87,7 +87,7 @@ export default function Home() {
               >
                 <Minus className="h-4 w-4" />
               </Button>
-              <span className="text-sm font-medium text-slate-700 dark:text-slate-300 min-w-12 text-center">
+              <span className="text-sm font-medium text-black min-w-12 text-center">
                 {fontSize}px
               </span>
               <Button
@@ -107,13 +107,13 @@ export default function Home() {
             {currentSurah.verses.map((verse, index) => (
               <div
                 key={index}
-                className="flex gap-4 items-start pb-4 border-b border-slate-100 dark:border-slate-800 last:border-0"
+                className="flex gap-4 items-start pb-4 border-b border-green-300 last:border-0"
               >
-                <span className="text-sm font-semibold text-slate-500 dark:text-slate-400 flex-shrink-0 mt-1">
+                <span className="text-sm font-semibold text-black flex-shrink-0 mt-1">
                   {index + 1}
                 </span>
                 <p
-                  className="text-slate-800 dark:text-slate-200 leading-relaxed flex-1"
+                  className="text-black leading-relaxed flex-1"
                   style={{ fontSize: `${fontSize}px` }}
                 >
                   {verse}
@@ -125,8 +125,8 @@ export default function Home() {
       </main>
 
       {/* Footer */}
-      <footer className="bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 py-4 mt-8">
-        <div className="max-w-4xl mx-auto px-4 text-center text-sm text-slate-600 dark:text-slate-400">
+      <footer className="bg-green-600 border-t border-green-700 py-4 mt-8">
+        <div className="max-w-4xl mx-auto px-4 text-center text-sm text-black">
           <p>تطبيق القرآن الكريم - Quranic Text App</p>
         </div>
       </footer>
