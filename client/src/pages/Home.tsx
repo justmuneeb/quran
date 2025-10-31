@@ -1,14 +1,20 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Plus, Minus } from "lucide-react";
-import { quranTexts } from "@/data/quranTexts";
+import { Plus, Minus, Loader2 } from "lucide-react";
+import { useQuranAPI } from "@/hooks/useQuranAPI";
 
-type SurahType = "mulk" | "manzil" | "yaseen";
+type SurahType = "mulk" | "yaseen";
+
+const SURAH_NUMBERS: Record<SurahType, number> = {
+  mulk: 67,
+  yaseen: 36,
+};
 
 export default function Home() {
   const [activeSurah, setActiveSurah] = useState<SurahType>("mulk");
   const [fontSize, setFontSize] = useState<number>(18);
+  const surahData = useQuranAPI(SURAH_NUMBERS[activeSurah]);
 
   // Load font size from localStorage on mount
   useEffect(() => {
@@ -22,8 +28,6 @@ export default function Home() {
   useEffect(() => {
     localStorage.setItem("quranFontSize", fontSize.toString());
   }, [fontSize]);
-
-  const currentSurah = quranTexts[activeSurah];
 
   const increaseFontSize = () => {
     setFontSize((prev) => Math.min(prev + 2, 32));
@@ -52,13 +56,6 @@ export default function Home() {
               سورة الملك
             </Button>
             <Button
-              onClick={() => setActiveSurah("manzil")}
-              variant={activeSurah === "manzil" ? "default" : "outline"}
-              className="rounded-full bg-white text-black hover:bg-gray-100"
-            >
-              المنزل
-            </Button>
-            <Button
               onClick={() => setActiveSurah("yaseen")}
               variant={activeSurah === "yaseen" ? "default" : "outline"}
               className="rounded-full bg-white text-black hover:bg-gray-100"
@@ -74,9 +71,14 @@ export default function Home() {
         <Card className="p-8 bg-green-100 shadow-lg">
           {/* Font Size Controls */}
           <div className="flex items-center justify-between mb-8 pb-6 border-b border-green-300">
-            <h2 className="text-xl font-semibold text-black">
-              {currentSurah.name}
-            </h2>
+            <div>
+              <h2 className="text-xl font-semibold text-black">
+                {surahData.name || "جاري التحميل..."}
+              </h2>
+              {surahData.englishName && (
+                <p className="text-sm text-gray-600 mt-1">{surahData.englishName}</p>
+              )}
+            </div>
             <div className="flex items-center gap-3 bg-green-200 rounded-lg p-2">
               <Button
                 onClick={decreaseFontSize}
@@ -103,24 +105,34 @@ export default function Home() {
           </div>
 
           {/* Verses Display */}
-          <div className="space-y-6 text-right" dir="rtl">
-            {currentSurah.verses.map((verse, index) => (
-              <div
-                key={index}
-                className="flex gap-4 items-start pb-4 border-b border-green-300 last:border-0"
-              >
-                <span className="text-sm font-semibold text-black flex-shrink-0 mt-1">
-                  {index + 1}
-                </span>
-                <p
-                  className="text-black leading-relaxed flex-1"
-                  style={{ fontSize: `${fontSize}px` }}
+          {surahData.loading ? (
+            <div className="flex justify-center items-center py-12">
+              <Loader2 className="h-8 w-8 animate-spin text-green-600" />
+            </div>
+          ) : surahData.error ? (
+            <div className="text-center py-8 text-red-600">
+              <p>خطأ في تحميل البيانات: {surahData.error}</p>
+            </div>
+          ) : (
+            <div className="space-y-6 text-right" dir="rtl">
+              {surahData.verses.map((verse) => (
+                <div
+                  key={verse.number}
+                  className="flex gap-4 items-start pb-4 border-b border-green-300 last:border-0"
                 >
-                  {verse}
-                </p>
-              </div>
-            ))}
-          </div>
+                  <span className="text-sm font-semibold text-black flex-shrink-0 mt-1">
+                    {verse.numberInSurah}
+                  </span>
+                  <p
+                    className="text-black leading-relaxed flex-1"
+                    style={{ fontSize: `${fontSize}px` }}
+                  >
+                    {verse.text}
+                  </p>
+                </div>
+              ))}
+            </div>
+          )}
         </Card>
       </main>
 
@@ -128,6 +140,7 @@ export default function Home() {
       <footer className="bg-green-600 border-t border-green-700 py-4 mt-8">
         <div className="max-w-4xl mx-auto px-4 text-center text-sm text-black">
           <p>تطبيق القرآن الكريم - Quranic Text App</p>
+          <p className="text-xs mt-1">Data from Quran.com API</p>
         </div>
       </footer>
     </div>
