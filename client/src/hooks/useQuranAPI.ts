@@ -32,9 +32,9 @@ export const useQuranAPI = (surahNumber: number): SurahData => {
       try {
         setData((prev) => ({ ...prev, loading: true, error: null }));
 
-        // Fetch verses with Arabic text (Uthmani script)
+        // Fetch verses with Arabic text (Indo-Pak script)
         const versesRes = await fetch(
-          `${QURAN_API_BASE}/quran/verses/uthmani?chapter_number=${surahNumber}&limit=300`
+          `${QURAN_API_BASE}/quran/verses/indopak?chapter_number=${surahNumber}&limit=300`
         );
         
         if (!versesRes.ok) {
@@ -54,7 +54,7 @@ export const useQuranAPI = (surahNumber: number): SurahData => {
 
         const verses: Verse[] = versesData.verses.map((verse: any) => ({
           number: verse.verse_number,
-          text: verse.text_uthmani || verse.text || "",
+          text: verse.text_indopak || verse.text || "",
           numberInSurah: verse.verse_key?.split(":")[1] || verse.verse_number,
         }));
 

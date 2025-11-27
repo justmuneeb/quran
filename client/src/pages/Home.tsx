@@ -140,7 +140,7 @@ export default function Home() {
       <footer className="bg-green-600 border-t border-green-700 py-4 mt-8">
         <div className="max-w-4xl mx-auto px-4 text-center text-sm text-black">
           <p>تطبيق القرآن الكريم - Quranic Text App</p>
-          <p className="text-xs mt-1">Data from Quran.com API</p>
+          <p className="text-xs mt-1">Indo-Pak Edition | Data from Quran.com API</p>
         </div>
       </footer>
     </div>
