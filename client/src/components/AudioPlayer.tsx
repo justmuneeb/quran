@@ -5,11 +5,13 @@ import { Play, Pause, RotateCcw } from "lucide-react";
 interface AudioPlayerProps {
   surahNumber: number;
   surahName: string;
+  reciterId: number; // Mishari Alafasy = 5
 }
 
 export default function AudioPlayer({
   surahNumber,
   surahName,
+  reciterId,
 }: AudioPlayerProps) {
   const [isPlaying, setIsPlaying] = useState(false);
   const [loopCount, setLoopCount] = useState(10);
@@ -18,34 +20,31 @@ export default function AudioPlayer({
   const audioRef = useRef<HTMLAudioElement>(null);
   const [audioUrl, setAudioUrl] = useState<string>("");
   const [isLoading, setIsLoading] = useState(false);
-  const [audioLanguage, setAudioLanguage] = useState<"arabic" | "arabic-urdu">("arabic");
-  const [reciterName, setReciterName] = useState<string>("");
 
-  // Fetch audio URL based on language choice
+  // Fetch audio URL from Quran.com API
   useEffect(() => {
     const fetchAudioUrl = async () => {
       try {
         setIsLoading(true);
-        
-        // Format surah number with leading zero
-        const surahNum = String(surahNumber).padStart(3, "0");
-        
-        // Different audio sources
-        let url = "";
-        let reciter = "";
-        
-        if (audioLanguage === "arabic") {
-          // Arabic only - Abdul Basit Murattal
-          url = `https://download.quranicaudio.com/quran/abdul_basit_murattal/${surahNum}.mp3`;
-          reciter = "Abdul Basit Murattal";
-        } else {
-          // Arabic + English/Urdu - Sudais & Shuraim with English
-          url = `https://download.quranicaudio.com/quran/sudais_shuraim_and_english/${surahNum}.mp3`;
-          reciter = "Sudais & Shuraim with Urdu";
+        const response = await fetch(
+          `https://api.quran.com/api/v4/chapter_recitations/${surahNumber}?reciter_id=${reciterId}`
+        );
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch audio");
         }
-        
-        setAudioUrl(url);
-        setReciterName(reciter);
+
+        const data = await response.json();
+
+        // Find the audio file for this chapter
+        if (data.audio_files && data.audio_files.length > 0) {
+          const audioFile = data.audio_files.find(
+            (file: any) => file.chapter_id === surahNumber
+          );
+          if (audioFile?.audio_url) {
+            setAudioUrl(audioFile.audio_url);
+          }
+        }
       } catch (error) {
         console.error("Error fetching audio:", error);
       } finally {
@@ -54,7 +53,7 @@ export default function AudioPlayer({
     };
 
     fetchAudioUrl();
-  }, [surahNumber, audioLanguage]);
+  }, [surahNumber, reciterId]);
 
   // Handle audio end event for looping
   useEffect(() => {
@@ -117,40 +116,11 @@ export default function AudioPlayer({
         <h3 className="text-lg font-semibold text-black">
           🎙️ {surahName} - Audio Recitation
         </h3>
-        <p className="text-sm text-gray-700">Reciter: {reciterName}</p>
+        <p className="text-sm text-gray-700">Reciter: Mishari Alafasy</p>
       </div>
 
       {/* Audio element */}
       <audio ref={audioRef} src={audioUrl} crossOrigin="anonymous" />
-
-      {/* Audio Language Toggle */}
-      <div className="flex items-center gap-4 flex-wrap">
-        <label className="text-sm font-medium text-black">Audio:</label>
-        <div className="flex gap-2">
-          <button
-            onClick={() => setAudioLanguage("arabic")}
-            disabled={isPlaying}
-            className={`px-4 py-2 rounded text-sm font-medium transition ${
-              audioLanguage === "arabic"
-                ? "bg-green-600 text-white"
-                : "bg-white border border-green-400 text-black hover:bg-green-50"
-            } disabled:opacity-50`}
-          >
-            Arabic Only
-          </button>
-          <button
-            onClick={() => setAudioLanguage("arabic-urdu")}
-            disabled={isPlaying}
-            className={`px-4 py-2 rounded text-sm font-medium transition ${
-              audioLanguage === "arabic-urdu"
-                ? "bg-green-600 text-white"
-                : "bg-white border border-green-400 text-black hover:bg-green-50"
-            } disabled:opacity-50`}
-          >
-            Arabic + Urdu
-          </button>
-        </div>
-      </div>
 
       {/* Loop counter input */}
       <div className="flex items-center gap-4">
@@ -207,6 +177,12 @@ export default function AudioPlayer({
 
       {isLoading && (
         <p className="text-center text-sm text-gray-600">Loading audio...</p>
+      )}
+
+      {!audioUrl && !isLoading && (
+        <p className="text-center text-sm text-red-600">
+          Audio not available for this Surah
+        </p>
       )}
     </div>
   );

@@ -109,6 +109,7 @@ export default function Home() {
           <AudioPlayer
             surahNumber={SURAH_NUMBERS[activeSurah]}
             surahName={surahData.name}
+            reciterId={5}
           />
 
           {/* Verses Display */}
