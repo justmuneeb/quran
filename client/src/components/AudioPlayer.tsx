@@ -19,6 +19,7 @@ export default function AudioPlayer({
   const [audioUrl, setAudioUrl] = useState<string>("");
   const [isLoading, setIsLoading] = useState(false);
   const [audioLanguage, setAudioLanguage] = useState<"arabic" | "arabic-urdu">("arabic");
+  const [reciterName, setReciterName] = useState<string>("");
 
   // Fetch audio URL based on language choice
   useEffect(() => {
@@ -31,15 +32,20 @@ export default function AudioPlayer({
         
         // Different audio sources
         let url = "";
+        let reciter = "";
+        
         if (audioLanguage === "arabic") {
-          // Arabic only - Sudais & Shuraim (without English/Urdu)
-          url = `https://download.quranicaudio.com/quran/sudais_shuraim/${surahNum}.mp3`;
+          // Arabic only - Abdul Basit Murattal
+          url = `https://download.quranicaudio.com/quran/abdul_basit_murattal/${surahNum}.mp3`;
+          reciter = "Abdul Basit Murattal";
         } else {
           // Arabic + English/Urdu - Sudais & Shuraim with English
           url = `https://download.quranicaudio.com/quran/sudais_shuraim_and_english/${surahNum}.mp3`;
+          reciter = "Sudais & Shuraim with Urdu";
         }
         
         setAudioUrl(url);
+        setReciterName(reciter);
       } catch (error) {
         console.error("Error fetching audio:", error);
       } finally {
@@ -111,7 +117,7 @@ export default function AudioPlayer({
         <h3 className="text-lg font-semibold text-black">
           🎙️ {surahName} - Audio Recitation
         </h3>
-        <p className="text-sm text-gray-700">Reciter: Sudais & Shuraim</p>
+        <p className="text-sm text-gray-700">Reciter: {reciterName}</p>
       </div>
 
       {/* Audio element */}
