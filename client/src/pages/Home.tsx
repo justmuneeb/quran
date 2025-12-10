@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Plus, Minus, Loader2 } from "lucide-react";
 import { useQuranAPI } from "@/hooks/useQuranAPI";
+import AudioPlayer from "@/components/AudioPlayer";
 
 type SurahType = "mulk" | "yaseen";
 
@@ -103,6 +104,13 @@ export default function Home() {
               </Button>
             </div>
           </div>
+
+          {/* Audio Player */}
+          <AudioPlayer
+            surahNumber={SURAH_NUMBERS[activeSurah]}
+            surahName={surahData.name}
+            reciterId={5}
+          />
 
           {/* Verses Display */}
           {surahData.loading ? (
