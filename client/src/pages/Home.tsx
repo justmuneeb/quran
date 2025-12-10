@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Plus, Minus, Loader2 } from "lucide-react";
@@ -15,6 +15,10 @@ const SURAH_NUMBERS: Record<SurahType, number> = {
 export default function Home() {
   const [activeSurah, setActiveSurah] = useState<SurahType>("mulk");
   const [fontSize, setFontSize] = useState<number>(18);
+  const [currentTime, setCurrentTime] = useState(0);
+  const [duration, setDuration] = useState(0);
+  const [highlightedVerseNumber, setHighlightedVerseNumber] = useState<number | null>(null);
+  const versesContainerRef = useRef<HTMLDivElement>(null);
   const surahData = useQuranAPI(SURAH_NUMBERS[activeSurah]);
 
   // Load font size from localStorage on mount
@@ -37,6 +41,21 @@ export default function Home() {
   const decreaseFontSize = () => {
     setFontSize((prev) => Math.max(prev - 2, 12));
   };
+
+  // Update highlighted verse based on audio progress
+  useEffect(() => {
+    if (duration === 0 || surahData.verses.length === 0) return;
+    const progress = currentTime / duration;
+    const verseIndex = Math.floor(progress * surahData.verses.length);
+    const verseNumber = Math.min(verseIndex + 1, surahData.verses.length);
+    setHighlightedVerseNumber(verseNumber);
+
+    // Auto-scroll to highlighted verse
+    const verseElement = document.getElementById(`verse-${verseNumber}`);
+    if (verseElement) {
+      verseElement.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+  }, [currentTime, duration, surahData.verses]);
 
   return (
     <div className="min-h-screen bg-green-50 flex flex-col">
@@ -109,6 +128,8 @@ export default function Home() {
           <AudioPlayer
             surahNumber={SURAH_NUMBERS[activeSurah]}
             surahName={surahData.name}
+            onTimeUpdate={setCurrentTime}
+            onDurationChange={setDuration}
           />
 
           {/* Verses Display */}
@@ -121,11 +142,16 @@ export default function Home() {
               <p>خطأ في تحميل البيانات: {surahData.error}</p>
             </div>
           ) : (
-            <div className="space-y-6 text-right" dir="rtl">
+            <div className="space-y-6 text-right" dir="rtl" ref={versesContainerRef}>
               {surahData.verses.map((verse) => (
                 <div
                   key={verse.number}
-                  className="flex gap-4 items-start pb-4 border-b border-green-300 last:border-0"
+                  id={`verse-${verse.numberInSurah}`}
+                  className={`flex gap-4 items-start pb-4 border-b border-green-300 last:border-0 transition-colors ${
+                    highlightedVerseNumber === verse.numberInSurah
+                      ? "bg-yellow-300 rounded-lg px-4 py-2"
+                      : ""
+                  }`}
                 >
                   <span className="text-sm font-semibold text-black flex-shrink-0 mt-1">
                     {verse.numberInSurah}

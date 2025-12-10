@@ -5,21 +5,28 @@ import { Play, Pause, RotateCcw } from "lucide-react";
 interface AudioPlayerProps {
   surahNumber: number;
   surahName: string;
+  onTimeUpdate?: (time: number) => void;
+  onDurationChange?: (duration: number) => void;
 }
 
 export default function AudioPlayer({
   surahNumber,
   surahName,
+  onTimeUpdate,
+  onDurationChange,
 }: AudioPlayerProps) {
   const [isPlaying, setIsPlaying] = useState(false);
   const [loopCount, setLoopCount] = useState(10);
   const [currentLoop, setCurrentLoop] = useState(0);
   const [inputValue, setInputValue] = useState("10");
+  const [currentTime, setCurrentTime] = useState(0);
+  const [duration, setDuration] = useState(0);
   const audioRef = useRef<HTMLAudioElement>(null);
   const [audioUrl, setAudioUrl] = useState<string>("");
   const [isLoading, setIsLoading] = useState(false);
   const [audioLanguage, setAudioLanguage] = useState<"arabic" | "arabic-urdu">("arabic");
   const [reciterName, setReciterName] = useState<string>("");
+  const [isSeeking, setIsSeeking] = useState(false);
 
   // Fetch audio URL based on language choice
   useEffect(() => {
@@ -69,6 +76,34 @@ export default function AudioPlayer({
     fetchAudioUrl();
   }, [surahNumber, audioLanguage]);
 
+  // Handle audio metadata loaded
+  const handleLoadedMetadata = () => {
+    const audio = audioRef.current;
+    if (audio) {
+      setDuration(audio.duration);
+      onDurationChange?.(audio.duration);
+    }
+  };
+
+  // Handle time update
+  const handleTimeUpdate = () => {
+    const audio = audioRef.current;
+    if (audio && !isSeeking) {
+      setCurrentTime(audio.currentTime);
+      onTimeUpdate?.(audio.currentTime);
+    }
+  };
+
+  // Handle seeking
+  const handleSeek = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newTime = parseFloat(e.target.value);
+    setCurrentTime(newTime);
+    onTimeUpdate?.(newTime);
+    if (audioRef.current) {
+      audioRef.current.currentTime = newTime;
+    }
+  };
+
   // Handle audio end event for looping
   useEffect(() => {
     const audio = audioRef.current;
@@ -114,6 +149,8 @@ export default function AudioPlayer({
     }
     setIsPlaying(false);
     setCurrentLoop(0);
+    setCurrentTime(0);
+    onTimeUpdate?.(0);
   };
 
   // Handle loop count change
@@ -122,6 +159,14 @@ export default function AudioPlayer({
     setInputValue(value);
     const num = parseInt(value) || 10;
     setLoopCount(Math.max(1, num));
+  };
+
+  // Format time display
+  const formatTime = (seconds: number) => {
+    if (!seconds || isNaN(seconds)) return "0:00";
+    const mins = Math.floor(seconds / 60);
+    const secs = Math.floor(seconds % 60);
+    return `${mins}:${secs.toString().padStart(2, "0")}`;
   };
 
   return (
@@ -134,7 +179,13 @@ export default function AudioPlayer({
       </div>
 
       {/* Audio element */}
-      <audio ref={audioRef} src={audioUrl} crossOrigin="anonymous" />
+      <audio
+        ref={audioRef}
+        src={audioUrl}
+        crossOrigin="anonymous"
+        onTimeUpdate={handleTimeUpdate}
+        onLoadedMetadata={handleLoadedMetadata}
+      />
 
       {/* Audio Language Toggle */}
       <div className="flex items-center gap-4 flex-wrap">
@@ -162,6 +213,26 @@ export default function AudioPlayer({
           >
             Arabic + Urdu
           </button>
+        </div>
+      </div>
+
+      {/* Progress Slider */}
+      <div className="space-y-2">
+        <input
+          type="range"
+          min="0"
+          max={duration || 0}
+          value={currentTime}
+          onChange={handleSeek}
+          onMouseDown={() => setIsSeeking(true)}
+          onMouseUp={() => setIsSeeking(false)}
+          onTouchStart={() => setIsSeeking(true)}
+          onTouchEnd={() => setIsSeeking(false)}
+          className="w-full h-2 bg-green-300 rounded-lg appearance-none cursor-pointer accent-green-600"
+        />
+        <div className="flex justify-between text-xs text-gray-700">
+          <span>{formatTime(currentTime)}</span>
+          <span>{formatTime(duration)}</span>
         </div>
       </div>
 
