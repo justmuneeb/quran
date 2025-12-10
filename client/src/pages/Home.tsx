@@ -49,16 +49,12 @@ export default function Home() {
     // Calculate which verse is currently playing
     const progress = currentTime / duration;
     const verseIndex = Math.floor(progress * surahData.verses.length);
-    const verseNumber = surahData.verses[Math.min(verseIndex, surahData.verses.length - 1)]?.numberInSurah;
+    // Clamp to valid range
+    const clampedIndex = Math.max(0, Math.min(verseIndex, surahData.verses.length - 1));
+    const verseNumber = surahData.verses[clampedIndex]?.numberInSurah;
     
     if (verseNumber) {
       setHighlightedVerseNumber(verseNumber);
-
-      // Auto-scroll to highlighted verse
-      const verseElement = document.getElementById(`verse-${verseNumber}`);
-      if (verseElement) {
-        verseElement.scrollIntoView({ behavior: "smooth", block: "center" });
-      }
     }
   }, [currentTime, duration, surahData.verses]);
 
@@ -152,7 +148,7 @@ export default function Home() {
                 <div
                   key={verse.number}
                   id={`verse-${verse.numberInSurah}`}
-                  className={`flex gap-4 items-start pb-4 border-b border-green-300 last:border-0 transition-all duration-300 ${
+                  className={`flex gap-4 items-start pb-4 border-b border-green-300 last:border-0 transition-all duration-200 ${
                     highlightedVerseNumber === verse.numberInSurah
                       ? "bg-yellow-300 rounded-lg px-4 py-2 shadow-md"
                       : ""
