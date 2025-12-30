@@ -13,6 +13,15 @@
 - [x] Smooth scrolling and navigation
 - [x] Display verse numbers
 
+## Audio Features
+
+- [x] Add audio player with language toggle
+- [x] Implement loop functionality
+- [x] Add progress slider for seeking
+- [x] Implement real-time verse highlighting
+- [x] Fix "Arabic + Urdu" audio to play Urdu translation
+- [x] Test audio for both Surah Mulk and Surah Yaseen
+
 ## API Integration
 
 - [x] Integrate Quran.com API

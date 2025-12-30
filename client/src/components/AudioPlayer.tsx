@@ -23,57 +23,28 @@ export default function AudioPlayer({
   const [duration, setDuration] = useState(0);
   const audioRef = useRef<HTMLAudioElement>(null);
   const [audioUrl, setAudioUrl] = useState<string>("");
-  const [isLoading, setIsLoading] = useState(false);
   const [audioLanguage, setAudioLanguage] = useState<"arabic" | "arabic-urdu">("arabic");
   const [reciterName, setReciterName] = useState<string>("");
   const [isSeeking, setIsSeeking] = useState(false);
 
-  // Fetch audio URL based on language choice
+  // Set audio URL based on language choice
   useEffect(() => {
-    const fetchAudioUrl = async () => {
-      try {
-        setIsLoading(true);
-        let url = "";
-        let reciter = "";
+    const surahNum = String(surahNumber).padStart(3, "0");
+    let url = "";
+    let reciter = "";
 
-        if (audioLanguage === "arabic") {
-          // Arabic only - Abdul Basit Murattal from quranicaudio.com
-          const surahNum = String(surahNumber).padStart(3, "0");
-          url = `https://download.quranicaudio.com/quran/abdul_basit_murattal/${surahNum}.mp3`;
-          reciter = "Abdul Basit Murattal";
-          setAudioUrl(url);
-          setReciterName(reciter);
-        } else {
-          // Arabic + Urdu - Mishari Alafasy from Quran.com API (reciter_id=5)
-          const response = await fetch(
-            `https://api.quran.com/api/v4/chapter_recitations/${surahNumber}?reciter_id=5`
-          );
+    if (audioLanguage === "arabic") {
+      // Arabic only - Abdul Basit Murattal from quranicaudio.com
+      url = `https://download.quranicaudio.com/quran/abdul_basit_murattal/${surahNum}.mp3`;
+      reciter = "Abdul Basit Murattal";
+    } else {
+      // Arabic + Urdu - Sudais and Shuraym with Urdu translation from quranicaudio.com
+      url = `https://download.quranicaudio.com/quran/sudais_and_shuraim_with_urdu/${surahNum}.mp3`;
+      reciter = "Sudais & Shuraym with Urdu";
+    }
 
-          if (!response.ok) {
-            throw new Error("Failed to fetch audio");
-          }
-
-          const data = await response.json();
-
-          // Find the audio file for this chapter
-          if (data.audio_files && data.audio_files.length > 0) {
-            const audioFile = data.audio_files.find(
-              (file: any) => file.chapter_id === surahNumber
-            );
-            if (audioFile?.audio_url) {
-              setAudioUrl(audioFile.audio_url);
-              setReciterName("Mishari Alafasy with Urdu");
-            }
-          }
-        }
-      } catch (error) {
-        console.error("Error fetching audio:", error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchAudioUrl();
+    setAudioUrl(url);
+    setReciterName(reciter);
   }, [surahNumber, audioLanguage]);
 
   // Handle audio metadata loaded
@@ -265,7 +236,7 @@ export default function AudioPlayer({
       <div className="flex gap-3 justify-center">
         <Button
           onClick={togglePlayPause}
-          disabled={isLoading || !audioUrl}
+          disabled={!audioUrl}
           className="bg-green-600 hover:bg-green-700 text-white flex items-center gap-2"
         >
           {isPlaying ? (
@@ -289,11 +260,7 @@ export default function AudioPlayer({
         </Button>
       </div>
 
-      {isLoading && (
-        <p className="text-center text-sm text-gray-600">Loading audio...</p>
-      )}
-
-      {!audioUrl && !isLoading && (
+      {!audioUrl && (
         <p className="text-center text-sm text-red-600">
           Audio not available for this Surah
         </p>
