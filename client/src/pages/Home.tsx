@@ -146,7 +146,7 @@ export default function Home() {
             <div className="space-y-6 text-right" dir="rtl" ref={versesContainerRef}>
               {surahData.verses.map((verse) => (
                 <div
-                  key={verse.number}
+                  key={`verse-${verse.number}`}
                   id={`verse-${verse.numberInSurah}`}
                   className={`flex gap-4 items-start pb-4 border-b border-green-300 last:border-0 transition-all duration-200 ${
                     highlightedVerseNumber === verse.numberInSurah
