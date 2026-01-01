@@ -38,8 +38,16 @@ export default function AudioPlayer({
       url = `https://download.quranicaudio.com/quran/abdul_basit_murattal/${surahNum}.mp3`;
       reciter = "Abdul Basit Murattal";
     } else {
-      // Arabic + Urdu - Sudais and Shuraym with Urdu translation from quranicaudio.com
-      url = `https://download.quranicaudio.com/quran/sudais_and_shuraim_with_urdu/${surahNum}.mp3`;
+      // Arabic + Urdu - Sudais and Shuraym with Urdu translation
+      // Surah Mulk (67) from quranicaudio.com, Surah Yaseen (36) from quranurdu.com
+      if (surahNumber === 67) {
+        url = `https://download.quranicaudio.com/quran/sudais_and_shuraim_with_urdu/${surahNum}.mp3`;
+      } else if (surahNumber === 36) {
+        url = `http://download2.quranurdu.com/Al%20Quran%20with%20Urdu%20Translation%20by%20Imam%20Al%20Sadais%20and%20Shraim/${surahNum}s-Yaseen.mp3`;
+      } else {
+        // Fallback for other surahs
+        url = `https://download.quranicaudio.com/quran/sudais_and_shuraim_with_urdu/${surahNum}.mp3`;
+      }
       reciter = "Sudais & Shuraym with Urdu";
     }
 
