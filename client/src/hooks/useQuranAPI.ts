@@ -52,11 +52,15 @@ export const useQuranAPI = (surahNumber: number): SurahData => {
         const surahName = firstVerse.surah?.name || "السورة";
         const surahEnglishName = firstVerse.surah?.english_name || "Surah";
 
-        const verses: Verse[] = versesData.verses.map((verse: any) => ({
-          number: verse.verse_number,
-          text: verse.text_indopak || verse.text || "",
-          numberInSurah: verse.verse_key?.split(":")[1] || verse.verse_number,
-        }));
+        const verses: Verse[] = versesData.verses.map((verse: any) => {
+          // Extract verse number from verse_key (format: "67:1")
+          const verseNumber = parseInt(verse.verse_key?.split(":")[1] || "0", 10);
+          return {
+            number: verse.id || verseNumber, // Use id as fallback, then verse_key
+            text: verse.text_indopak || verse.text || "",
+            numberInSurah: verseNumber,
+          };
+        });
 
         setData({
           number: surahNumber,
