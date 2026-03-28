@@ -12,6 +12,15 @@ const SURAH_NUMBERS: Record<SurahType, number> = {
   yaseen: 36,
 };
 
+// Function to clean Quranic text by replacing special punctuation marks with comma
+const cleanVerseText = (text: string): string => {
+  // Replace only Quranic pause marks (۝, ۙ, ۚ, ۛ, ۖ, ۗ, ۘ, ۓ) and zero-width characters with comma
+  // Unicode: U+06D9 (ۙ), U+06DA (ۚ), U+06DB (ۛ), U+06D6 (ۖ), U+06D7 (ۗ), U+06D8 (ۘ), U+06D3 (ۓ), U+06DD (۝)
+  return text
+    .replace(/[\u06D9\u06DA\u06DB\u06D6\u06D7\u06D8\u06D3\u06DD\u200B\u200C\u200D\uFEFF]/g, '،')
+    .replace(/،+/g, '،'); // Replace multiple commas with single comma
+};
+
 export default function Home() {
   const [activeSurah, setActiveSurah] = useState<SurahType>("mulk");
   const [fontSize, setFontSize] = useState<number>(18);
@@ -100,27 +109,23 @@ export default function Home() {
                 <p className="text-sm text-gray-600 mt-1">{surahData.englishName}</p>
               )}
             </div>
-            <div className="flex items-center gap-3 bg-green-200 rounded-lg p-2">
+            <div className="flex items-center gap-2">
               <Button
                 onClick={decreaseFontSize}
-                variant="ghost"
                 size="sm"
-                className="h-8 w-8 p-0"
-                title="Decrease font size"
+                className="bg-green-600 hover:bg-green-700 text-white"
               >
-                <Minus className="h-4 w-4" />
+                <Minus className="w-4 h-4" />
               </Button>
-              <span className="text-sm font-medium text-black min-w-12 text-center">
+              <span className="text-sm font-semibold text-black min-w-12 text-center">
                 {fontSize}px
               </span>
               <Button
                 onClick={increaseFontSize}
-                variant="ghost"
                 size="sm"
-                className="h-8 w-8 p-0"
-                title="Increase font size"
+                className="bg-green-600 hover:bg-green-700 text-white"
               >
-                <Plus className="h-4 w-4" />
+                <Plus className="w-4 h-4" />
               </Button>
             </div>
           </div>
@@ -136,7 +141,7 @@ export default function Home() {
           {/* Verses Display */}
           {surahData.loading ? (
             <div className="flex justify-center items-center py-12">
-              <Loader2 className="h-8 w-8 animate-spin text-green-600" />
+              <Loader2 className="w-8 h-8 animate-spin text-green-600" />
             </div>
           ) : surahData.error ? (
             <div className="text-center py-8 text-red-600">
@@ -161,7 +166,7 @@ export default function Home() {
                     className="text-black leading-relaxed flex-1"
                     style={{ fontSize: `${fontSize}px` }}
                   >
-                    {verse.text}
+                    {cleanVerseText(verse.text)}
                   </p>
                 </div>
               ))}
@@ -173,8 +178,7 @@ export default function Home() {
       {/* Footer */}
       <footer className="bg-green-600 border-t border-green-700 py-4 mt-8">
         <div className="max-w-4xl mx-auto px-4 text-center text-sm text-black">
-          <p>تطبيق القرآن الكريم - Quranic Text App</p>
-          <p className="text-xs mt-1">Indo-Pak Edition | Data from Quran.com API</p>
+          <p>© 2024 Quranic Text App. All rights reserved.</p>
         </div>
       </footer>
     </div>
