@@ -14,10 +14,10 @@ const SURAH_NUMBERS: Record<SurahType, number> = {
 
 // Function to clean Quranic text by replacing special punctuation marks with comma
 const cleanVerseText = (text: string): string => {
-  // Replace only Quranic pause marks (۝, ۙ, ۚ, ۛ, ۖ, ۗ, ۘ, ۓ) and zero-width characters with comma
-  // Unicode: U+06D9 (ۙ), U+06DA (ۚ), U+06DB (ۛ), U+06D6 (ۖ), U+06D7 (ۗ), U+06D8 (ۘ), U+06D3 (ۓ), U+06DD (۝)
+  // Replace Quranic pause marks and special characters with comma
+  // Unicode: U+06D9 (ۙ), U+06DA (ۚ), U+06DB (ۛ), U+06D6 (ۖ), U+06D7 (ۗ), U+06D8 (ۘ), U+06D3 (ۓ), U+06DD (۝), U+E01A (horse)
   return text
-    .replace(/[\u06D9\u06DA\u06DB\u06D6\u06D7\u06D8\u06D3\u06DD\u200B\u200C\u200D\uFEFF]/g, '،')
+    .replace(/[\u06D9\u06DA\u06DB\u06D6\u06D7\u06D8\u06D3\u06DD\uE01A\u200B\u200C\u200D\uFEFF]/g, '،')
     .replace(/،+/g, '،'); // Replace multiple commas with single comma
 };
 
