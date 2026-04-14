@@ -43,7 +43,7 @@ export default function AudioPlayer({
       if (surahNumber === 67) {
         url = `https://download.quranicaudio.com/quran/sudais_and_shuraim_with_urdu/${surahNum}.mp3`;
       } else if (surahNumber === 36) {
-        url = `http://download2.quranurdu.com/Al%20Quran%20with%20Urdu%20Translation%20by%20Imam%20Al%20Sadais%20and%20Shraim/${surahNum}s-Yaseen.mp3`;
+        url = `https://archive.org/download/SudaisAndShuraymUrduTranslationMirajKhalid/036-1%20www.quranaudio.info.mp3`;
       } else {
         // Fallback for other surahs
         url = `https://download.quranicaudio.com/quran/sudais_and_shuraim_with_urdu/${surahNum}.mp3`;
