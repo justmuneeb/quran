@@ -43,7 +43,7 @@ export default function AudioPlayer({
       if (surahNumber === 67) {
         url = `https://download.quranicaudio.com/quran/sudais_and_shuraim_with_urdu/${surahNum}.mp3`;
       } else if (surahNumber === 36) {
-        url = `https://archive.org/download/SudaisAndShuraymUrduTranslationMirajKhalid/036-1%20www.quranaudio.info.mp3`;
+        url = `https://www.humariweb.com/quran/ar-ur/36-(hamariweb.com).mp3`;
       } else {
         // Fallback for other surahs
         url = `https://download.quranicaudio.com/quran/sudais_and_shuraim_with_urdu/${surahNum}.mp3`;
