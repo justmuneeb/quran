@@ -43,10 +43,10 @@ export default function AudioPlayer({
       if (surahNumber === 67) {
         url = `https://download.quranicaudio.com/quran/sudais_and_shuraim_with_urdu/${surahNum}.mp3`;
       } else if (surahNumber === 36) {
-        url = `https://www.humariweb.com/quran/ar-ur/36-(hamariweb.com).mp3`;
+        url = `https://files.manuscdn.com/user_upload_by_module/session_file/310419663029819665/FhzLNGKiVGoGFphz.mp3`;
       } else {
         // Fallback for other surahs
-        url = `https://download.quranicaudio.com/quran/sudais_and_shuraim_with_urdu/${surahNum}.mp3`;
+        url = `https://files.manuscdn.com/user_upload_by_module/session_file/310419663029819665/FhzLNGKiVGoGFphz.mp3`;
       }
       reciter = "Sudais & Shuraym with Urdu";
     }
