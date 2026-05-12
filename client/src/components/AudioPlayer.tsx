@@ -43,8 +43,8 @@ export default function AudioPlayer({
       if (surahNumber === 67) {
         url = `https://download.quranicaudio.com/quran/sudais_and_shuraim_with_urdu/${surahNum}.mp3`;
       } else if (surahNumber === 36) {
-        // Surah Yaseen (36) - use merged Urdu audio file (part 1 + part 2)
-        url = `https://files.manuscdn.com/user_upload_by_module/session_file/310419663029819665/sCuVrXrLfNiGlbBo.mp3`;
+        // Surah Yaseen (36) - use properly merged Urdu audio file (part 1 + part 2)
+        url = `https://files.manuscdn.com/user_upload_by_module/session_file/310419663029819665/EcyyCwPuFMjbzxkM.mp3`;
       } else {
         // Fallback for other surahs
         url = `https://download.quranicaudio.com/quran/sudais_and_shuraim_with_urdu/${surahNum}.mp3`;
