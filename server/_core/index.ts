@@ -37,7 +37,7 @@ async function startServer() {
   registerStorageProxy(app);
   registerOAuthRoutes(app);
   
-  // Audio proxy endpoint - serves audio files without CORS restrictions
+  // Audio proxy endpoint - serves audio files without CORS restrictions and supports range requests
   app.get("/api/audio-proxy", async (req, res) => {
     try {
       const fileUrl = req.query.url as string;
@@ -47,11 +47,33 @@ async function startServer() {
       
       const response = await handleAudioProxy(fileUrl);
       const buffer = await response.arrayBuffer();
+      const totalSize = buffer.byteLength;
       
       res.setHeader("Content-Type", "audio/mpeg");
       res.setHeader("Cache-Control", "public, max-age=3600");
       res.setHeader("Access-Control-Allow-Origin", "*");
-      res.send(Buffer.from(buffer));
+      res.setHeader("Accept-Ranges", "bytes");
+      
+      // Handle range requests for seeking
+      const rangeHeader = req.headers.range;
+      if (rangeHeader) {
+        const parts = rangeHeader.replace(/bytes=/, "").split("-");
+        const start = parseInt(parts[0], 10);
+        const end = parts[1] ? parseInt(parts[1], 10) : totalSize - 1;
+        
+        if (start >= totalSize || end >= totalSize || start > end) {
+          res.status(416).set("Content-Range", `bytes */${totalSize}`).end();
+          return;
+        }
+        
+        res.status(206);
+        res.setHeader("Content-Range", `bytes ${start}-${end}/${totalSize}`);
+        res.setHeader("Content-Length", end - start + 1);
+        res.send(Buffer.from(buffer).slice(start, end + 1));
+      } else {
+        res.setHeader("Content-Length", totalSize);
+        res.send(Buffer.from(buffer));
+      }
     } catch (error) {
       console.error("Audio proxy error:", error);
       res.status(500).json({ error: "Failed to proxy audio" });
