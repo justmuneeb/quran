@@ -1,4 +1,4 @@
-# Quranic Text App - Surah Mulk, Manzil & Yaseen
+# Quranic Text App - Surah Mulk and Yaseen
 
 A modern, interactive web application for reciting and studying Quranic text with synchronized audio playback. Built with React, Express, and tRPC for a seamless user experience.
 
