@@ -45,6 +45,47 @@ This app is designed for **anyone who wants to read, recite, study, or listen to
 - **Special Character Handling** - Unicode characters properly formatted with Arabic commas
 - **Verse Numbers** - Clear verse numbering for easy reference
 
+## 🔧 Technical Challenges & Solutions
+
+During development, I faced and solved several complex technical problems:
+
+### Challenge 1: CORS Restrictions on Audio Playback
+**Problem:** Audio files from external CDNs were blocked by browser CORS (Cross-Origin Resource Sharing) policies. Direct links to audio files couldn't be played from the deployed domain.
+
+**Solution:** Built a backend audio proxy endpoint (`/api/audio-proxy`) that:
+- Fetches audio files from external CDNs on the server side
+- Streams audio to the browser without CORS restrictions
+- Properly forwards HTTP headers and content types
+- Result: Audio now plays seamlessly from any CDN source
+
+### Challenge 2: Audio Seeking Didn't Work
+**Problem:** Users couldn't drag the progress slider to seek to a specific time in the audio. The slider was frozen because the proxy wasn't supporting HTTP range requests (206 Partial Content).
+
+**Solution:** Implemented HTTP range request support in the audio proxy:
+- Parse `Range` header from browser requests
+- Fetch only the requested byte range from the CDN
+- Return 206 Partial Content response with proper headers
+- Result: Users can now drag the slider to play from any position instantly
+
+### Challenge 3: Dependency Version Conflicts
+**Problem:** Deployment failed because `@tanstack/react-query@4.x` was incompatible with `@trpc/react-query@11.x` (which requires v5)
+
+**Solution:** 
+- Updated `@tanstack/react-query` to v5
+- Removed problematic pnpm patches that were blocking installation
+- Result: Clean build and successful deployment
+
+### Challenge 4: Real-time Verse Highlighting with Audio Sync
+**Problem:** Verses needed to highlight in sync with audio playback, but audio timing varies based on reciter and language mode.
+
+**Solution:** Implemented dynamic verse timing calculation:
+- Calculate verse duration based on total audio length and verse count
+- Update verse highlighting as audio progresses
+- Support multiple loop iterations with proper verse tracking
+- Result: Verses highlight perfectly in sync with audio playback
+
+**Key Learning:** These challenges taught me about backend optimization, HTTP protocols, and real-time frontend synchronization - skills that are valuable in production applications.
+
 ## 🛠️ Tech Stack
 
 - **Frontend**: React 19 + Tailwind CSS 4
