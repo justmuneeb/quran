@@ -1,6 +1,29 @@
 # Quranic Text App - Surah Mulk, Manzil & Yaseen
 
-A modern, interactive web application for reciting and studying the Quranic text with synchronized audio playback. Built with React, Express, and tRPC for a seamless user experience.
+A modern, interactive web application for reciting and studying Quranic text with synchronized audio playback. Built with React, Express, and tRPC for a seamless user experience.
+
+## 💡 Why I Built This
+
+I created this app to solve real problems I noticed with existing Quranic apps:
+
+**Problem 1: No Loop Control for Recitation**
+- Most apps don't allow you to repeat a Surah multiple times automatically
+- Whether you're practicing, memorizing, or just want to listen repeatedly, you have to manually restart
+- This wastes time and breaks your focus and concentration
+
+**Problem 2: Fixed Font Size**
+- Existing apps don't let you increase font size
+- People with vision difficulties, elderly users, and anyone who prefers larger text struggle
+- Reading small text on screens is tiring and inaccessible for many
+
+**My Solution:**
+- ✅ **Loop Control (1-1000 times)** - Repeat any Surah as many times as you want with automatic progression
+- ✅ **Adjustable Font Size** - Increase or decrease text size for comfortable, accessible reading
+- ✅ **Smooth Seeking** - Jump to any part of the recitation instantly
+- ✅ **Real-time Verse Highlighting** - Follow along as the audio plays
+- ✅ **Dual Language Support** - Arabic-only or Arabic + Urdu translation
+
+This app is designed for **anyone who wants to read, recite, study, or listen to Quranic text** - whether you are a student, learner, regular reader, or someone who just wants a better, more accessible experience.
 
 ## 🌟 Features
 
@@ -191,7 +214,7 @@ This project is open source and available under the MIT License.
 
 ## 🙏 Acknowledgments
 
-- Quranic audio from authentic reciters (Sudais & Shuraym)
+- Quranic audio from authentic reciters (Sudais & Shuraym, Abdul Basit)
 - Urdu translation audio sources
 - Built with [Manus](https://manus.im) platform
 - UI components from [shadcn/ui](https://ui.shadcn.com)
