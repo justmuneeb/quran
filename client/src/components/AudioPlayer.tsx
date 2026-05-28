@@ -27,33 +27,47 @@ export default function AudioPlayer({
   const [reciterName, setReciterName] = useState<string>("");
   const [isSeeking, setIsSeeking] = useState(false);
 
-  // Set audio URL based on language choice
+  /**
+   * Set audio URL based on selected language
+   * 
+   * Arabic-only: Direct link to Abdul Basit Murattal recitation
+   * Arabic+Urdu: Uses backend proxy to bypass CORS restrictions
+   * 
+   * The backend proxy (/api/audio-proxy) allows:
+   * - Playing audio from external CDNs without CORS errors
+   * - Seeking/scrubbing via HTTP range requests
+   * - Efficient streaming (only download what's needed)
+   */
   useEffect(() => {
     const surahNum = String(surahNumber).padStart(3, "0");
     let url = "";
     let reciter = "";
 
     if (audioLanguage === "arabic") {
-      // Arabic only - Abdul Basit Murattal from quranicaudio.com
+      // Arabic-only mode: Direct link to Abdul Basit Murattal recitation
+      // This CDN allows direct cross-origin access, so no proxy needed
       url = `https://download.quranicaudio.com/quran/abdul_basit_murattal/${surahNum}.mp3`;
       reciter = "Abdul Basit Murattal";
     } else {
-      // Arabic + Urdu - Sudais and Shuraym with Urdu translation
-      // Surah Mulk (67) from quranicaudio.com, Surah Yaseen (36) from quranurdu.com
+      // Arabic + Urdu mode: Sudais and Shuraym with Urdu translation
+      // Different sources for different Surahs based on availability
       if (surahNumber === 67) {
+        // Surah Mulk from quranicaudio.com
         url = `https://download.quranicaudio.com/quran/sudais_and_shuraim_with_urdu/${surahNum}.mp3`;
       } else if (surahNumber === 36) {
-        // Surah Yaseen (36) - use backend proxy to avoid CORS issues
+        // Surah Yaseen: Use backend proxy to avoid CORS issues
+        // The original CDN doesn't allow cross-origin requests
         const originalUrl = `https://files.manuscdn.com/user_upload_by_module/session_file/310419663029819665/EcyyCwPuFMjbzxkM.mp3`;
         url = `/api/audio-proxy?url=${encodeURIComponent(originalUrl)}`;
       } else {
-        // Fallback for other surahs
+        // Fallback for other Surahs
         url = `https://download.quranicaudio.com/quran/sudais_and_shuraim_with_urdu/${surahNum}.mp3`;
       }
       reciter = "Sudais & Shuraym with Urdu";
     }
 
-    // For Arabic + Urdu mode with quranicaudio.com, use backend proxy for CORS compatibility
+    // For Arabic + Urdu mode with quranicaudio.com URLs, use backend proxy
+    // This ensures consistent behavior and allows seeking to work properly
     if (audioLanguage === "arabic-urdu" && url.startsWith("https://download.quranicaudio.com")) {
       url = `/api/audio-proxy?url=${encodeURIComponent(url)}`;
     }
